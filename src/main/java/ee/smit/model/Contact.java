@@ -72,4 +72,27 @@ public class Contact {
     public void setSelectedCarBrands(Set<CarBrand> selectedCarBrands) {
         this.selectedCarBrands = selectedCarBrands;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        // For new objects, all fields will be null/default values
+        return validDriverLicense == contact.validDriverLicense &&
+               (id == null ? contact.id == null : id.equals(contact.id)) &&
+               (fullName == null ? contact.fullName == null : fullName.equals(contact.fullName)) &&
+               (phone == null ? contact.phone == null : phone.equals(contact.phone)) &&
+               (selectedCarBrands == null ? contact.selectedCarBrands == null : selectedCarBrands.equals(contact.selectedCarBrands));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (validDriverLicense ? 1 : 0);
+        result = 31 * result + (selectedCarBrands != null ? selectedCarBrands.hashCode() : 0);
+        return result;
+    }
 }
