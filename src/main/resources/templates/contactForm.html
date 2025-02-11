@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kontaktandmed</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+    <h1>Palun sisestage enda kontaktandmed ning automargid, millest olete huvitatud</h1>
+
+    <!-- Edu teade, kui andmed on salvestatud -->
+    <div th:if="${message}" style="color: green;">
+        <p th:text="${message}"></p>
+    </div>
+
+    <!-- Vorm andmete sisestamiseks -->
+    <form th:action="@{/contact}" th:object="${contact}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div>
+            <label for="fullName">Ees- ja perekonnanimi:</label>
+            <input type="text" id="fullName" th:field="*{fullName}" />
+            <p th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" style="color: red;"></p>
+        </div>
+        <div>
+            <label for="phone">Kontakttelefon:</label>
+            <input type="text" id="phone" th:field="*{phone}" />
+            <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color: red;"></p>
+        </div>
+        <div>
+            <label for="carBrands">Automargid:</label>
+            <select id="carBrands" th:field="*{selectedCarBrands}" multiple="multiple">
+                <option th:each="brand : ${carBrands}"
+                        th:value="${brand.id}"
+                        th:text="${brand.name}">
+                </option>
+            </select>
+            <p th:if="${#fields.hasErrors('selectedCarBrands')}" th:errors="*{selectedCarBrands}" style="color: red;"></p> 
+
+        </div>
+        <div>
+            <label for="driverLicense">Kas Teil on kehtiv juhiluba?</label>
+            <input type="checkbox" id="driverLicense" th:field="*{validDriverLicense}" />
+        </div>
+        <div>
+            <button type="submit">Salvesta</button>
+        </div>
+        <!-- Üldised veateated vormi kohta -->
+        <div th:if="${#fields.hasErrors('*')}" style="color: red;">
+            <p>Vormis on vigu. Palun kontrollige sisestatud andmeid.</p>
+        </div>
+    </form>
+</body>
+</html>
