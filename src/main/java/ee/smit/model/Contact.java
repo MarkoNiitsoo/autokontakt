@@ -28,6 +28,7 @@ public class Contact {
         joinColumns = @JoinColumn(name = "contact_id"),
         inverseJoinColumns = @JoinColumn(name = "carbrand_id")
     )
+    @jakarta.validation.constraints.NotEmpty(message = "Palun valige vähemalt üks automark")
     private Set<CarBrand> selectedCarBrands;
 
     // Konstruktor, getterid ja setterid

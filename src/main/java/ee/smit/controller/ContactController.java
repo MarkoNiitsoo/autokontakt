@@ -85,26 +85,16 @@ public class ContactController {
     @PostMapping("/contact")
     public String saveContact(@Valid @ModelAttribute("contact") Contact contact,
                             BindingResult bindingResult,
-                            @RequestParam(value = "selectedCarBrands", required = false) Set<CarBrand> selectedCarBrands,
                             HttpSession session,
                             RedirectAttributes redirectAttributes,
                             Model model) {
+        
         // Kui valideerimisel ilmneb vigu, tagastame vormi uuesti koos vigadega
         if (bindingResult.hasErrors()) {
             List<CarBrand> carBrands = getHierarchicalCarBrands(null, 0);
             model.addAttribute("carBrands", carBrands);
             return "contactForm";
         }
-        
-        // Manuaalne validatsioon: kontrollime, kas automargid on valitud
-        if (selectedCarBrands == null || selectedCarBrands.isEmpty()) {
-            bindingResult.rejectValue("selectedCarBrands", "NotEmpty", "Palun valige vähemalt üks automark");
-            List<CarBrand> carBrands = getHierarchicalCarBrands(null, 0);
-            model.addAttribute("carBrands", carBrands);
-            return "contactForm";
-        }
-
-        contact.setSelectedCarBrands(selectedCarBrands);
 
         // Kui validatsioon läbitud, salvestame kontaktandmed andmebaasi
         Contact savedContact = contactService.saveContact(contact);
