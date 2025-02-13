@@ -1,5 +1,7 @@
 package ee.smit.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ee.smit.model.CarBrand;
 import ee.smit.model.Contact;
 import ee.smit.repository.CarBrandRepository;
@@ -29,7 +31,8 @@ import java.util.stream.Collectors;
  */
 @Controller
 public class ContactController {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(ContactController.class);
     private final ContactService contactService;
     private final ContactRepository contactRepository;
     private final CarBrandRepository carBrandRepository;
@@ -52,15 +55,19 @@ public class ContactController {
      */
     @GetMapping("/contact")
     public String showContactForm(Model model, HttpSession session) {
+        log.debug("Kontaktivormi kuvamine");
         Long contactId = (Long) session.getAttribute("contactId");
         Contact contact;
         if (contactId != null) {
+            log.debug("Laen olemasoleva kontakti ID-ga: {}", contactId);
             contact = contactRepository.findById(contactId).orElse(null);
             if (contact == null) {
+                log.warn("Kontakti ID-ga {} ei leitud, loon uue kontakti", contactId);
                 contact = new Contact();
-                session.removeAttribute("contactId"); // Eemaldame vigase contactId seansist
+                session.removeAttribute("contactId");
             }
         } else {
+            log.debug("Loon uue kontakti");
             contact = new Contact();
         }
         model.addAttribute("contact", contact);
@@ -116,14 +123,16 @@ public class ContactController {
                             RedirectAttributes redirectAttributes,
                             Model model) {
         
-        // Kui valideerimisel ilmneb vigu, tagastame vormi uuesti koos vigadega
+        log.debug("Kontakti salvestamine: {}", contact.getFullName());
+        
         if (bindingResult.hasErrors()) {
+            log.warn("Kontakti valideerimisel tekkisid vead: {}", bindingResult.getAllErrors());
             List<CarBrand> carBrands = getHierarchicalCarBrands(null, 0);
             model.addAttribute("carBrands", carBrands);
             return "contactForm";
         }
 
-        // Teisendame ID-d CarBrand objektideks
+        log.debug("Valitud automarkide arv: {}", selectedCarBrandIds != null ? selectedCarBrandIds.size() : 0);
         if (selectedCarBrandIds != null && !selectedCarBrandIds.isEmpty()) {
             Set<CarBrand> selectedCarBrands = selectedCarBrandIds.stream()
                 .map(id -> carBrandRepository.findById(id).orElse(null))
@@ -132,8 +141,8 @@ public class ContactController {
             contact.setSelectedCarBrands(selectedCarBrands);
         }
 
-        // Kui validatsioon läbitud, salvestame kontaktandmed andmebaasi
         Contact savedContact = contactService.saveContact(contact);
+        log.info("Kontakt edukalt salvestatud ID-ga: {}", savedContact.getId());
         session.setAttribute("contactId", savedContact.getId());
         redirectAttributes.addFlashAttribute("message", "Andmed salvestatud edukalt!");
         return "redirect:/contact";

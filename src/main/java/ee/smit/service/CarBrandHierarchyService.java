@@ -1,5 +1,7 @@
 package ee.smit.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ee.smit.model.CarBrand;
 import ee.smit.repository.CarBrandRepository;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,8 @@ import java.util.List;
  */
 @Service
 public class CarBrandHierarchyService {
-
+    
+    private static final Logger log = LoggerFactory.getLogger(CarBrandHierarchyService.class);
     private final CarBrandRepository carBrandRepository;
 
     public CarBrandHierarchyService(CarBrandRepository carBrandRepository) {
@@ -29,13 +32,22 @@ public class CarBrandHierarchyService {
      * @return Hierarhiliselt vormindatud automarkide nimekiri
      */
     public List<CarBrand> getHierarchicalCarBrands(Long parentId, int level) {
+        log.debug("Laen hierarhilised automargid. ParentId: {}, Tase: {}", parentId, level);
         List<CarBrand> hierarchicalBrands = new ArrayList<>();
         List<CarBrand> currentLevelBrands;
 
-        if (parentId == null) {
-            currentLevelBrands = carBrandRepository.findAllByParentIsNullOrderByNameAsc();
-        } else {
-            currentLevelBrands = carBrandRepository.findByParentIdOrderByNameAsc(parentId);
+        try {
+            if (parentId == null) {
+                log.debug("Laen tippkategooria margid");
+                currentLevelBrands = carBrandRepository.findAllByParentIsNullOrderByNameAsc();
+            } else {
+                log.debug("Laen alamkategooria margid parent ID-ga: {}", parentId);
+                currentLevelBrands = carBrandRepository.findByParentIdOrderByNameAsc(parentId);
+            }
+            log.debug("Leitud {} marki tasemel {}", currentLevelBrands.size(), level);
+        } catch (Exception e) {
+            log.error("Viga automarkide laadimisel: {}", e.getMessage());
+            throw e;
         }
 
         for (CarBrand brand : currentLevelBrands) {
@@ -46,9 +58,10 @@ public class CarBrandHierarchyService {
             brand.setName(indent.toString() + brand.getName());
             hierarchicalBrands.add(brand);
 
-            // Rekursiivne väljakutse alammarkide jaoks
+            log.trace("Lisan rekursiivselt alamargid ID-le: {}", brand.getId());
             hierarchicalBrands.addAll(getHierarchicalCarBrands(brand.getId(), level + 1));
         }
+        log.debug("Tagastan kokku {} marki", hierarchicalBrands.size());
         return hierarchicalBrands;
     }
 }
