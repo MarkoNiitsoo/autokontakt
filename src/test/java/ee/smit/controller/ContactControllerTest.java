@@ -16,11 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
+
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 /**
  * Testid ContactController klassi jaoks.
@@ -42,6 +46,7 @@ public class ContactControllerTest {
     private CarBrandRepository carBrandRepository;
 
     @Test
+    @WithMockUser
     void testUueKontaktiVormiKuvamine() throws Exception {
         // Ettevalmistus
         Mockito.when(carBrandRepository.findAllByParentIsNullOrderByNameAsc()).thenReturn(Collections.emptyList());
@@ -56,6 +61,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testOlemasolevKontaktiVormiKuvamine() throws Exception {
         // Ettevalmistus
         Long kontaktiId = 1L;
@@ -75,6 +81,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKustutaudKontaktiVormiKuvamine() throws Exception {
         // Ettevalmistus
         Long kontaktiId = 999L;
@@ -92,6 +99,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKontaktiEdukaSalvestamine() throws Exception {
         // Ettevalmistus - automarkide loomine
         CarBrand mark1 = new CarBrand();
@@ -133,6 +141,7 @@ public class ContactControllerTest {
 
         // Tegevus ja kontroll
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
+                       .with(SecurityMockMvcRequestPostProcessors.csrf())
                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                        .param("fullName", "Test Test")
                        .param("phone", "12345678")
@@ -143,6 +152,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKontaktiSalvestamineIlmaNimeta() throws Exception {
         // Ettevalmistus
         CarBrand mark = new CarBrand();
@@ -153,6 +163,7 @@ public class ContactControllerTest {
 
         // Tegevus ja kontroll
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "") // Nimi puudu
                         .param("phone", "12345678")
@@ -163,6 +174,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKontaktiSalvestamineIlmaTelefonita() throws Exception {
         // Ettevalmistus
         CarBrand mark = new CarBrand();
@@ -173,6 +185,7 @@ public class ContactControllerTest {
 
         // Tegevus ja kontroll
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "Test Test")
                         .param("phone", "") // Telefon puudu
@@ -183,6 +196,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKontaktiSalvestamineIlmaAutomarkideta() throws Exception {
         // Ettevalmistus
         CarBrand mark = new CarBrand();
@@ -193,6 +207,7 @@ public class ContactControllerTest {
 
         // Tegevus ja kontroll
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "Test Test")
                         .param("phone", "12345678")) // Automargid puudu
@@ -202,6 +217,7 @@ public class ContactControllerTest {
     }
 
     @Test
+    @WithMockUser
     void testKontaktiSalvestamineKoikValjadTuhjad() throws Exception {
         // Ettevalmistus
         CarBrand mark = new CarBrand();
@@ -212,6 +228,7 @@ public class ContactControllerTest {
 
         // Tegevus ja kontroll
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "")
                         .param("phone", ""))
