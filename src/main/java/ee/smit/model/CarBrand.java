@@ -53,4 +53,20 @@ public class CarBrand {
     public void setParent(CarBrand parent) {
         this.parent = parent;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CarBrand carBrand = (CarBrand) o;
+        return (name == null ? carBrand.name == null : name.equals(carBrand.name)) &&
+               (parent == null ? carBrand.parent == null : parent.equals(carBrand.parent));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (parent != null ? parent.hashCode() : 0);
+        return result;
+    }
 }
