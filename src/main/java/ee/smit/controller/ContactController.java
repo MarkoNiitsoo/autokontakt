@@ -5,6 +5,7 @@ import ee.smit.model.Contact;
 import ee.smit.repository.CarBrandRepository;
 import ee.smit.repository.ContactRepository;
 import ee.smit.service.ContactService;
+import ee.smit.service.CarBrandHierarchyService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class ContactController {
@@ -26,13 +28,16 @@ public class ContactController {
     private final ContactService contactService;
     private final ContactRepository contactRepository;
     private final CarBrandRepository carBrandRepository;
+    private final CarBrandHierarchyService carBrandHierarchyService;
 
     public ContactController(ContactService contactService,
                            ContactRepository contactRepository,
-                           CarBrandRepository carBrandRepository) {
+                           CarBrandRepository carBrandRepository,
+                           CarBrandHierarchyService carBrandHierarchyService) {
         this.contactService = contactService;
         this.contactRepository = contactRepository;
         this.carBrandRepository = carBrandRepository;
+        this.carBrandHierarchyService = carBrandHierarchyService;
     }
 
     @GetMapping("/contact")
@@ -51,7 +56,7 @@ public class ContactController {
         model.addAttribute("contact", contact);
 
         // Laadime andmebaasist automargid hierarhiliselt
-        List<CarBrand> carBrands = getHierarchicalCarBrands(null, 0); // Käivitame rekursiivse meetodi
+        List<CarBrand> carBrands = carBrandHierarchyService.getHierarchicalCarBrands(null, 0);
         model.addAttribute("carBrands", carBrands);
 
         return "contactForm";
@@ -85,6 +90,7 @@ public class ContactController {
     @PostMapping("/contact")
     public String saveContact(@Valid @ModelAttribute("contact") Contact contact,
                             BindingResult bindingResult,
+                            @RequestParam(value = "selectedCarBrands", required = false) Set<Long> selectedCarBrandIds,
                             HttpSession session,
                             RedirectAttributes redirectAttributes,
                             Model model) {
@@ -94,6 +100,15 @@ public class ContactController {
             List<CarBrand> carBrands = getHierarchicalCarBrands(null, 0);
             model.addAttribute("carBrands", carBrands);
             return "contactForm";
+        }
+
+        // Convert IDs to CarBrand objects
+        if (selectedCarBrandIds != null && !selectedCarBrandIds.isEmpty()) {
+            Set<CarBrand> selectedCarBrands = selectedCarBrandIds.stream()
+                .map(id -> carBrandRepository.findById(id).orElse(null))
+                .filter(brand -> brand != null)
+                .collect(Collectors.toSet());
+            contact.setSelectedCarBrands(selectedCarBrands);
         }
 
         // Kui validatsioon läbitud, salvestame kontaktandmed andmebaasi

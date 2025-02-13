@@ -139,6 +139,13 @@ public class ContactControllerTest {
 
     @Test
     void testSaveContactValidationErrors_FullNameMissing() throws Exception {
+        // Mock car brands repository for form redisplay
+        CarBrand brand = new CarBrand();
+        brand.setId(1L);
+        brand.setName("Test Brand");
+        Mockito.when(carBrandRepository.findAllByParentIsNullOrderByNameAsc())
+               .thenReturn(Collections.singletonList(brand));
+
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "") // Eesnimi puudu
@@ -146,11 +153,18 @@ public class ContactControllerTest {
                         .param("selectedCarBrands", "1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("contactForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "fullName")); // Viga fullName vÃ¤ljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "fullName")); // Viga fullName väljal
     }
 
     @Test
     void testSaveContactValidationErrors_PhoneMissing() throws Exception {
+        // Mock car brands repository for form redisplay
+        CarBrand brand = new CarBrand();
+        brand.setId(1L);
+        brand.setName("Test Brand");
+        Mockito.when(carBrandRepository.findAllByParentIsNullOrderByNameAsc())
+               .thenReturn(Collections.singletonList(brand));
+
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "Test Test")
@@ -158,31 +172,45 @@ public class ContactControllerTest {
                         .param("selectedCarBrands", "1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("contactForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "phone")); // Viga phone vÃ¤ljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "phone")); // Viga phone väljal
     }
 
     @Test
     void testSaveContactValidationErrors_CarBrandsMissing() throws Exception {
+        // Mock car brands repository for form redisplay
+        CarBrand brand = new CarBrand();
+        brand.setId(1L);
+        brand.setName("Test Brand");
+        Mockito.when(carBrandRepository.findAllByParentIsNullOrderByNameAsc())
+               .thenReturn(Collections.singletonList(brand));
+
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("fullName", "Test Test")
                         .param("phone", "12345678")) // Automargid puudu
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("contactForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "selectedCarBrands")); // Viga selectedCarBrands vÃ¤ljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "selectedCarBrands")); // Viga selectedCarBrands väljal
     }
 
     @Test
     void testSaveContactValidationErrors_AllFieldsMissing() throws Exception {
+        // Mock car brands repository for form redisplay
+        CarBrand brand = new CarBrand();
+        brand.setId(1L);
+        brand.setName("Test Brand");
+        Mockito.when(carBrandRepository.findAllByParentIsNullOrderByNameAsc())
+               .thenReturn(Collections.singletonList(brand));
+
         mockMvc.perform(MockMvcRequestBuilders.post("/contact")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("fullName", "") // KÃµik vÃ¤ljad puudu
+                        .param("fullName", "") // Kõik väljad puudu
                         .param("phone", ""))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("contactForm"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("contact")) // On olemas vigu "contact" objektis
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "fullName")) // Viga fullName vÃ¤ljal
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "phone")) // Viga phone vÃ¤ljal
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "selectedCarBrands")); // Viga selectedCarBrands vÃ¤ljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "fullName")) // Viga fullName väljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "phone")) // Viga phone väljal
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("contact", "selectedCarBrands")); // Viga selectedCarBrands väljal
     }
 }
