@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Kontrollerklass kontaktide haldamiseks.
+ * Käsitleb kontaktide lisamist, muutmist ja kuvamist veebiliideses.
+ * Võimaldab kontaktidele lisada seoseid automarkidega.
+ */
 @Controller
 public class ContactController {
 
@@ -40,13 +45,18 @@ public class ContactController {
         this.carBrandHierarchyService = carBrandHierarchyService;
     }
 
+    /**
+     * Kuvab kontakti vormi.
+     * Kui seansist leitakse kontakti ID, laetakse olemasolev kontakt muutmiseks.
+     * Vastasel juhul kuvatakse tühi vorm uue kontakti lisamiseks.
+     */
     @GetMapping("/contact")
     public String showContactForm(Model model, HttpSession session) {
         Long contactId = (Long) session.getAttribute("contactId");
         Contact contact;
         if (contactId != null) {
-            contact = contactRepository.findById(contactId).orElse(null); // Muudetud: orElse(null)
-            if (contact == null) { // Kui ID-ga kontakti ei leita (võibolla andmebaasist kustutatud?), loome uue
+            contact = contactRepository.findById(contactId).orElse(null);
+            if (contact == null) {
                 contact = new Contact();
                 session.removeAttribute("contactId"); // Eemaldame vigase contactId seansist
             }
@@ -62,31 +72,42 @@ public class ContactController {
         return "contactForm";
     }
 
+    /**
+     * Abimeetod automarkide hierarhiliseks kuvamiseks.
+     * Lisab taanded vastavalt hierarhia tasemele.
+     * 
+     * @param parentId Ülemkategooria ID või null tippkategooria jaoks
+     * @param level Praegune hierarhia tase (määrab taande suuruse)
+     * @return Hierarhiliselt vormindatud automarkide nimekiri
+     */
     private List<CarBrand> getHierarchicalCarBrands(Long parentId, int level) {
         List<CarBrand> hierarchicalBrands = new ArrayList<>();
         List<CarBrand> currentLevelBrands;
 
         if (parentId == null) {
-            currentLevelBrands = carBrandRepository.findAllByParentIsNullOrderByNameAsc(); // Top-level brands
+            currentLevelBrands = carBrandRepository.findAllByParentIsNullOrderByNameAsc(); // Tippkategooria margid
         } else {
-            currentLevelBrands = carBrandRepository.findByParentIdOrderByNameAsc(parentId); // Sub-brands
+            currentLevelBrands = carBrandRepository.findByParentIdOrderByNameAsc(parentId); // Alamkategooria margid
         }
 
         for (CarBrand brand : currentLevelBrands) {
             StringBuilder indent = new StringBuilder();
             for (int i = 0; i < level; i++) {
-                indent.append("    "); // 4 spaces for each level
+                indent.append("    "); // 4 tühikut iga taseme kohta
             }
-            brand.setName(indent.toString() + brand.getName()); // Add indentation to the name
-            hierarchicalBrands.add(brand); // Add current brand
+            brand.setName(indent.toString() + brand.getName()); // Lisame taande nimele
+            hierarchicalBrands.add(brand);
 
-            // Recursive call for sub-brands
-            hierarchicalBrands.addAll(getHierarchicalCarBrands(brand.getId(), level + 1)); // Level + 1 for sub-brands
+            // Rekursiivne väljakutse alammarkide jaoks
+            hierarchicalBrands.addAll(getHierarchicalCarBrands(brand.getId(), level + 1));
         }
         return hierarchicalBrands;
     }
 
-
+    /**
+     * Käsitleb kontakti salvestamist.
+     * Valideerib sisendandmed ja salvestab kontakti koos valitud automarkidega.
+     */
     @PostMapping("/contact")
     public String saveContact(@Valid @ModelAttribute("contact") Contact contact,
                             BindingResult bindingResult,
@@ -102,7 +123,7 @@ public class ContactController {
             return "contactForm";
         }
 
-        // Convert IDs to CarBrand objects
+        // Teisendame ID-d CarBrand objektideks
         if (selectedCarBrandIds != null && !selectedCarBrandIds.isEmpty()) {
             Set<CarBrand> selectedCarBrands = selectedCarBrandIds.stream()
                 .map(id -> carBrandRepository.findById(id).orElse(null))

@@ -7,28 +7,32 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testid Contact klassi equals() ja hashCode() meetodite kontrollimiseks.
+ * Kontrollib võrdlemisloogika korrektsust erinevate stsenaariumite puhul.
+ */
 public class ContactTest {
 
     @Test
-    void equals_SameObject() {
+    void testVordlemineSamaObjektiga() {
         Contact contact1 = new Contact();
         assertTrue(contact1.equals(contact1)); // Objekt iseendaga on võrdne
     }
 
     @Test
-    void equals_NullObject() {
+    void testVordlemineNullObjektiga() {
         Contact contact1 = new Contact();
         assertFalse(contact1.equals(null)); // Objekt null-objektiga ei ole võrdne
     }
 
     @Test
-    void equals_DifferentClass() {
+    void testVordlemineTeiseKlassiObjektiga() {
         Contact contact1 = new Contact();
         assertFalse(contact1.equals("Not a Contact object")); // Objekt teise klassi objektiga ei ole võrdne
     }
 
     @Test
-    void equals_EqualObjects() {
+    void testVordlemineVordseteObjektidega() {
         Contact contact1 = new Contact();
         contact1.setId(1L);
         contact1.setFullName("Test Name");
@@ -51,7 +55,7 @@ public class ContactTest {
     }
 
     @Test
-    void equals_NotEqualDifferentId() {
+    void testVordlemineErinvateIdDega() {
         Contact contact1 = new Contact();
         contact1.setId(1L);
         Contact contact2 = new Contact();
@@ -60,7 +64,7 @@ public class ContactTest {
     }
 
     @Test
-    void equals_NotEqualDifferentFullName() {
+    void testVordlemineErinevateNimedega() {
         Contact contact1 = new Contact();
         contact1.setFullName("Name 1");
         Contact contact2 = new Contact();
@@ -69,7 +73,7 @@ public class ContactTest {
     }
 
     @Test
-    void equals_NotEqualDifferentPhone() {
+    void testVordlemineErinevateTelefonidega() {
         Contact contact1 = new Contact();
         contact1.setPhone("111");
         Contact contact2 = new Contact();
@@ -78,7 +82,7 @@ public class ContactTest {
     }
 
     @Test
-    void equals_NotEqualDifferentDriverLicense() {
+    void testVordlemineErinevateJuhilubadega() {
         Contact contact1 = new Contact();
         contact1.setValidDriverLicense(true);
         Contact contact2 = new Contact();
@@ -87,7 +91,7 @@ public class ContactTest {
     }
 
     @Test
-    void equals_NotEqualDifferentSelectedCarBrands() {
+    void testVordlemineErinevateAutomarkidega() {
         Contact contact1 = new Contact();
         contact1.setSelectedCarBrands(Set.of(new CarBrand("Brand1", null)));
         Contact contact2 = new Contact();
@@ -96,7 +100,7 @@ public class ContactTest {
     }
 
     @Test
-    void hashCode_EqualObjects() {
+    void testHashCodeVordsetelObjektidel() {
         Contact contact1 = new Contact();
         contact1.setId(1L);
         Contact contact2 = new Contact();
@@ -105,7 +109,7 @@ public class ContactTest {
     }
 
     @Test
-    void hashCode_NotEqualObjects() {
+    void testHashCodeMitteVordsetelObjektidel() {
         Contact contact1 = new Contact();
         contact1.setId(1L);
         Contact contact2 = new Contact();

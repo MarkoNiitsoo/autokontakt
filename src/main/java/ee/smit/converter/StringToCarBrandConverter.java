@@ -6,6 +6,10 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * Teisendab stringi (ID) CarBrand objektiks.
+ * Kasutatakse vormist saadud automargivaliku teisendamiseks andmebaasi objektiks.
+ */
 @Component
 public class StringToCarBrandConverter implements Converter<String, CarBrand> {
 
@@ -21,6 +25,6 @@ public class StringToCarBrandConverter implements Converter<String, CarBrand> {
             return null;
         }
         return carBrandRepository.findById(Long.parseLong(source))
-                .orElseThrow(() -> new IllegalArgumentException("CarBrand not found with id: " + source));
+                .orElseThrow(() -> new IllegalArgumentException("Automarki ID-ga " + source + " ei leitud"));
     }
 }

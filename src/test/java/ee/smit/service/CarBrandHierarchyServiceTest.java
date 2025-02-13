@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+/**
+ * Testid CarBrandHierarchyService klassi jaoks.
+ * Kontrollib automarkide hierarhilise struktuuri loomist ja kuvamist.
+ */
 public class CarBrandHierarchyServiceTest {
 
     @Mock
@@ -25,74 +29,71 @@ public class CarBrandHierarchyServiceTest {
     private CarBrandHierarchyService carBrandHierarchyService;
 
     @BeforeEach
-    public void setUp() {
+    public void seadista() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void getHierarchicalCarBrands_TopLevelBrandsOnly() {
-        // Arrange
-        CarBrand brand1 = new CarBrand();
-        brand1.setId(1L);
-        brand1.setName("Brand 1");
+    void testAinultTippTasemeMarkidega() {
+        // Ettevalmistus
+        CarBrand mark1 = new CarBrand();
+        mark1.setId(1L);
+        mark1.setName("Mercedes-Benz");
 
-        CarBrand brand2 = new CarBrand();
-        brand2.setId(2L);
-        brand2.setName("Brand 2");
+        CarBrand mark2 = new CarBrand();
+        mark2.setId(2L);
+        mark2.setName("BMW");
 
-        when(carBrandRepository.findAllByParentIsNullOrderByNameAsc()).thenReturn(Arrays.asList(brand1, brand2));
+        when(carBrandRepository.findAllByParentIsNullOrderByNameAsc()).thenReturn(Arrays.asList(mark1, mark2));
         when(carBrandRepository.findByParentIdOrderByNameAsc(1L)).thenReturn(Collections.emptyList());
         when(carBrandRepository.findByParentIdOrderByNameAsc(2L)).thenReturn(Collections.emptyList());
 
+        // Tegevus
+        List<CarBrand> hierarhilisedMargid = carBrandHierarchyService.getHierarchicalCarBrands(null, 0);
 
-        // Act
-        List<CarBrand> hierarchicalBrands = carBrandHierarchyService.getHierarchicalCarBrands(null, 0);
-
-        // Assert
-        assertEquals(2, hierarchicalBrands.size());
-        assertEquals("Brand 1", hierarchicalBrands.get(0).getName());
-        assertEquals("Brand 2", hierarchicalBrands.get(1).getName());
+        // Kontroll
+        assertEquals(2, hierarhilisedMargid.size());
+        assertEquals("Mercedes-Benz", hierarhilisedMargid.get(0).getName());
+        assertEquals("BMW", hierarhilisedMargid.get(1).getName());
     }
 
     @Test
-    void getHierarchicalCarBrands_WithSubBrands() {
-        // Arrange
-        CarBrand brand1 = new CarBrand();
-        brand1.setId(1L);
-        brand1.setName("Brand 1");
+    void testAlamMarkidega() {
+        // Ettevalmistus
+        CarBrand mark1 = new CarBrand();
+        mark1.setId(1L);
+        mark1.setName("Mercedes-Benz");
 
-        CarBrand subBrand1 = new CarBrand();
-        subBrand1.setId(3L);
-        subBrand1.setName("Sub-brand 1");
-        subBrand1.setParent(brand1);
+        CarBrand alamMark1 = new CarBrand();
+        alamMark1.setId(3L);
+        alamMark1.setName("C-Klass");
+        alamMark1.setParent(mark1);
 
-        CarBrand subBrand2 = new CarBrand();
-        subBrand2.setId(4L);
-        subBrand2.setName("Sub-brand 2");
-        subBrand2.setParent(brand1);
+        CarBrand alamMark2 = new CarBrand();
+        alamMark2.setId(4L);
+        alamMark2.setName("E-Klass");
+        alamMark2.setParent(mark1);
 
-
-        when(carBrandRepository.findAllByParentIsNullOrderByNameAsc()).thenReturn(Collections.singletonList(brand1));
-        when(carBrandRepository.findByParentIdOrderByNameAsc(1L)).thenReturn(Arrays.asList(subBrand1, subBrand2));
+        when(carBrandRepository.findAllByParentIsNullOrderByNameAsc()).thenReturn(Collections.singletonList(mark1));
+        when(carBrandRepository.findByParentIdOrderByNameAsc(1L)).thenReturn(Arrays.asList(alamMark1, alamMark2));
         when(carBrandRepository.findByParentIdOrderByNameAsc(3L)).thenReturn(Collections.emptyList());
         when(carBrandRepository.findByParentIdOrderByNameAsc(4L)).thenReturn(Collections.emptyList());
 
+        // Tegevus
+        List<CarBrand> hierarhilisedMargid = carBrandHierarchyService.getHierarchicalCarBrands(null, 0);
 
-        // Act
-        List<CarBrand> hierarchicalBrands = carBrandHierarchyService.getHierarchicalCarBrands(null, 0);
-
-        // Assert
-        assertEquals(3, hierarchicalBrands.size());
-        assertEquals("Brand 1", hierarchicalBrands.get(0).getName());
-        String subBrand1Name = hierarchicalBrands.get(1).getName();
-        String subBrand2Name = hierarchicalBrands.get(2).getName();
+        // Kontroll
+        assertEquals(3, hierarhilisedMargid.size());
+        assertEquals("Mercedes-Benz", hierarhilisedMargid.get(0).getName());
+        String alamMark1Nimi = hierarhilisedMargid.get(1).getName();
+        String alamMark2Nimi = hierarhilisedMargid.get(2).getName();
         
-        // Check indentation (4 spaces) and content separately
-        assertEquals(4, subBrand1Name.indexOf("Sub-brand 1")); // Verify 4 spaces before name
-        assertEquals(4, subBrand2Name.indexOf("Sub-brand 2")); // Verify 4 spaces before name
-        assertTrue(subBrand1Name.endsWith("Sub-brand 1")); // Verify the actual name
-        assertTrue(subBrand2Name.endsWith("Sub-brand 2")); // Verify the actual name
+        // Kontrollime taanet (4 tühikut) ja sisu eraldi
+        assertEquals(4, alamMark1Nimi.indexOf("C-Klass")); // Kontrollime, et enne nime on 4 tühikut
+        assertEquals(4, alamMark2Nimi.indexOf("E-Klass")); // Kontrollime, et enne nime on 4 tühikut
+        assertTrue(alamMark1Nimi.endsWith("C-Klass")); // Kontrollime tegelikku nime
+        assertTrue(alamMark2Nimi.endsWith("E-Klass")); // Kontrollime tegelikku nime
     }
 
-    // Siia saad lisada veel teste erinevate hierarhia tasemete ja stsenaariumide jaoks
+    // Siia saab lisada veel teste erinevate hierarhia tasemete ja stsenaariumide jaoks
 }

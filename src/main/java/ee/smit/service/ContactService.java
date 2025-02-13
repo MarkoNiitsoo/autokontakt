@@ -4,6 +4,10 @@ import ee.smit.model.Contact;
 import ee.smit.repository.ContactRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Teenusklass kontaktide haldamiseks.
+ * Sisaldab äriloogikat kontaktide töötlemiseks ja salvestamiseks.
+ */
 @Service
 public class ContactService {
 
@@ -13,8 +17,14 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
+    /**
+     * Salvestab kontakti andmebaasi.
+     * 
+     * @param contact Salvestatav kontakt
+     * @return Salvestatud kontakt koos genereeritud ID-ga
+     */
     public Contact saveContact(Contact contact) {
-        // Siin saad lisada ka lisaloogikat enne salvestamist
+        // Siin saab vajadusel lisada täiendavat äriloogikat enne salvestamist
         return contactRepository.save(contact);
     }
 }

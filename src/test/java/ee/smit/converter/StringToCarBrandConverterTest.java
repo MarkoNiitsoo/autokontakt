@@ -12,6 +12,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+/**
+ * Testid StringToCarBrandConverter klassi jaoks.
+ * Kontrollib stringi teisendamist CarBrand objektiks erinevate sisendite puhul.
+ */
 class StringToCarBrandConverterTest {
 
     @Mock
@@ -20,53 +24,55 @@ class StringToCarBrandConverterTest {
     private StringToCarBrandConverter converter;
 
     @BeforeEach
-    void setUp() {
+    void seadista() {
         MockitoAnnotations.openMocks(this);
         converter = new StringToCarBrandConverter(carBrandRepository);
     }
 
     @Test
-    void convertValidId() {
-        // Arrange
-        CarBrand expectedBrand = new CarBrand();
-        expectedBrand.setId(1L);
-        expectedBrand.setName("Test Brand");
+    void testKorrektseIdTeisendamine() {
+        // Ettevalmistus
+        CarBrand eeldatavMark = new CarBrand();
+        eeldatavMark.setId(1L);
+        eeldatavMark.setName("Test Brand");
 
-        when(carBrandRepository.findById(1L)).thenReturn(Optional.of(expectedBrand));
+        when(carBrandRepository.findById(1L)).thenReturn(Optional.of(eeldatavMark));
 
-        // Act
-        CarBrand result = converter.convert("1");
+        // Tegevus
+        CarBrand tulemus = converter.convert("1");
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(expectedBrand.getId(), result.getId());
-        assertEquals(expectedBrand.getName(), result.getName());
+        // Kontroll
+        assertNotNull(tulemus);
+        assertEquals(eeldatavMark.getId(), tulemus.getId());
+        assertEquals(eeldatavMark.getName(), tulemus.getName());
     }
 
     @Test
-    void convertNullString() {
-        // Act & Assert
+    void testNullStringiTeisendamine() {
+        // Tegevus ja kontroll
         assertNull(converter.convert(null));
     }
 
     @Test
-    void convertEmptyString() {
-        // Act & Assert
+    void testTuhjaStringiTeisendamine() {
+        // Tegevus ja kontroll
         assertNull(converter.convert(""));
     }
 
     @Test
-    void convertNonExistentId() {
-        // Arrange
+    void testOlematuIdTeisendamine() {
+        // Ettevalmistus
         when(carBrandRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> converter.convert("999"));
+        // Tegevus ja kontroll
+        assertThrows(IllegalArgumentException.class, () -> converter.convert("999"),
+                    "Peaks viskama erindi, kui automarki ei leita");
     }
 
     @Test
-    void convertInvalidNumber() {
-        // Act & Assert
-        assertThrows(NumberFormatException.class, () -> converter.convert("not-a-number"));
+    void testMittearvuliseStringiTeisendamine() {
+        // Tegevus ja kontroll
+        assertThrows(NumberFormatException.class, () -> converter.convert("mitte-number"),
+                    "Peaks viskama erindi, kui sisend pole arvuline");
     }
 }

@@ -18,7 +18,7 @@ public class Contact {
     @NotBlank(message = "Kontakttelefon on kohustuslik")
     private String phone;
 
-    // Näide: kas kasutajal on kehtiv juhiluba
+    // Näitab, kas kontaktil on kehtiv juhiluba (true = on olemas, false = puudub)
     private boolean validDriverLicense;
 
     // Seos automarkidega – mitme omavaheline seos
@@ -79,7 +79,7 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        // For new objects, all fields will be null/default values
+        // Uute objektide puhul on kõik väljad null või vaikeväärtustega
         return validDriverLicense == contact.validDriverLicense &&
                (id == null ? contact.id == null : id.equals(contact.id)) &&
                (fullName == null ? contact.fullName == null : fullName.equals(contact.fullName)) &&
