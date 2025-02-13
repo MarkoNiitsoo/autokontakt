@@ -167,6 +167,13 @@ Proovitöö käigus õppisin ma rohkem Spring Boot testimise kohta, eriti integr
 
 Ettepanekuna võiks ülesande kirjelduses võibolla rohkem rõhutada testimise olulisust ja oodatavat koodi katvuse protsenti. Samuti võiks lisada vihjeid testimise raamistike ja tööriistade kohta, mida Spring Boot'is kasutatakse.
 
+Projekti koodi katvuse analüüsiks on kasutusel JaCoCo (Java Code Coverage) tööriist. JaCoCo genereerib detailsed raportid, mis näitavad, kui hästi on kood testidega kaetud. Raportid genereeritakse automaatselt `mvn clean test` käsu käivitamisel (soovitav on kasutada `clean` käsku, et eemaldada vanad raportid) ja need on leitavad järgmistest asukohtadest:
+* HTML raport: `target/site/jacoco/index.html` - Interaktiivne raport, mis näitab koodi katvust visuaalselt
+* XML raport: `target/site/jacoco/jacoco.xml` - Masinloetav formaat, kasulik CI/CD tööriistadega integreerimiseks
+* CSV raport: `target/site/jacoco/jacoco.csv` - Tabulaarformaat andmete analüüsiks
+
+JaCoCo raportid annavad hea ülevaate, millised koodiosad vajavad veel testimist ja aitavad hoida koodi kvaliteeti kõrgel tasemel.
+
 Kokkuvõttes olen proovitöö ülesandega väga rahul ja see oli minu jaoks hea ja õpetlik kogemus.
 
 ---
@@ -189,5 +196,3 @@ Ajakulu mõjutasid mitmed faktorid:
 Kokkuvõttes oli proovitöö ajakulu suurem kui ma alguses lootsin, aga olen rahul, et sain ülesande lahendatud ja koodi kvaliteedi kõrgeks. Proovitöö oli minu jaoks hea väljakutse ja õpetlik kogemus, mis andis hea ülevaate Java ja Spring Boot veebirakenduste arendusest ja testimisest.
 
 ---
-
-
