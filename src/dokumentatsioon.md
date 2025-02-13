@@ -180,9 +180,9 @@ Kokkuvõttes olen proovitöö ülesandega väga rahul ja see oli minu jaoks hea 
 
 ## 7. Ajahinnangu tagasiside
 
-Minu esialgne ajahinnang proovitöö lahendamiseks enne alustamist oli 20 tundi. See hinnang tundus mulle enne alustamist realistlik, arvestades ülesande mahtu ja detaile, mis olid proovitöö kirjelduses toodud. Ma planeerisin proovitöö lahendamiseks nädala, arvestades oma igapäevaseid toimetusi ja töökohustusi.
+Minu esialgne ajahinnang proovitöö lahendamiseks enne alustamist oli 20 tundi. See hinnang tundus mulle enne alustamist realistlik, arvestades ülesande mahtu ja detaile, mis olid proovitöö kirjelduses toodud. Ma planeerisin proovitöö lahendamiseks nädala, arvestades oma igapäevaseid toimetusi ja kohustusi.
 
-Tegelikkuses kulus mul proovitöö lahendamiseks tõenäoliselt umbes 20 tundi või isegi veidi rohkem. Aega kulus rohkem peamiselt ootamatute eluliste asjaolude tõttu, mis juhtusid proovitöö tegemise ajal, sealhulgas ka planeeritud elektrikatkestus tähtpäeval, mis takistas mul õigeaegselt proovitööd lõpetada.
+Tegelikkuses kulus mul proovitöö lahendamiseks tõenäoliselt umbes 24 tundi või isegi veidi rohkem. Aega kulus rohkem peamiselt ootamatute eluliste asjaolude tõttu, mis juhtusid proovitöö tegemise ajal, sealhulgas ka planeeritud elektrikatkestus tähtpäeval, mis takistas mul õigeaegselt proovitööd lõpetada.
 
 Ajakulu mõjutasid mitmed faktorid:
 
@@ -196,3 +196,15 @@ Ajakulu mõjutasid mitmed faktorid:
 Kokkuvõttes oli proovitöö ajakulu suurem kui ma alguses lootsin, aga olen rahul, et sain ülesande lahendatud ja koodi kvaliteedi kõrgeks. Proovitöö oli minu jaoks hea väljakutse ja õpetlik kogemus, mis andis hea ülevaate Java ja Spring Boot veebirakenduste arendusest ja testimisest.
 
 ---
+
+## 8. Optimeerimise/parendamise võimalused
+
+* Hetkel genereeritakse autode loend igal lehe kuvamisel. Mõtekas oleks seda teha ainult siis kui autode loend muutub,
+* sõltuvalt rakenduse otstarbest võiks baasis hoida ka kõikide kontakt kirjete loomise timestampid,
+
+---
+
+## 9. Andmebaasi väljavõte.
+* [**Struktuur**](https://github.com/MarkoNiitsoo/autokontakt/blob/main/src/main/resources/schema.sql),
+* [**Algandmed**](https://github.com/MarkoNiitsoo/autokontakt/blob/main/src/main/resources/data.sql),
+* [**Testandmete väljavõte**](https://github.com/MarkoNiitsoo/autokontakt/blob/main/andmebaasi_dump_testandmed.sql)
